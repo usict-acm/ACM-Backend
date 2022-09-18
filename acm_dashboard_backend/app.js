@@ -1,6 +1,7 @@
 require('dotenv').config();
 const flash = require("connect-flash");
 const express = require("express");
+const cors = require("cors");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").strategy;
 const mysql = require("mysql");
@@ -22,6 +23,13 @@ db.connect(function(err){
 })
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "*",
+    credentials: true
+  })
+)
 
 //Fetch user doc
 app.post("/fetchUserDoc", function(req, res){
