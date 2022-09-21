@@ -14,15 +14,15 @@ const db = mysql.createConnection({
   database : 'acmbackend'
 });
 
-async function makeConnection(){
-  db.connect(function(err){
-    if(err){
-      console.log(err);
-    }else{
-      console.log("mysql connected");
-    }
-  });
-}
+
+db.connect(function(err){
+  if(err){
+    console.log(err);
+  }else{
+    console.log("mysql connected");
+  }
+});
+
 
 const app = express();
 
@@ -44,64 +44,61 @@ app.post("/fetchUserDoc", function(req, res){
   })
 });
 
-//Create blogs
-app.post("./createBlog", function(req,res) {
-  const post = {title:"" ,body:""};
-  const sql = `INSERT INTO blogs SET ?`;
-  const query = db.query(sql, post, function(err, result){
-    if(err){
-      console.log(err);
-    }else{
-      res.send("1 post added");
-    }
-  })
-});
-
-app.post("/blogs", function(req, res){
-  db.query('SELECT * FROM blogs', function(err, results){
-    if(err){
-      console.log(err);
-    }else{
-      res.send(results);
-    }
-  })
-});
-
-//Select single blog by blog id
-app.post("/singleBlog/:blogId", function(req, res){
-  const blogId = req.params.blogId;
-
-  if(isNaN(Number(blogId))){
-    return res.status(400).json({err: "Number only, please!"})
-  }
-
-  db.query(`SELECT * FROM blogs WHERE blogId = ?`, [blogId], function(err, result){
-    if(err){
-      console.log(err);
-    }else{
-      res.send(result);
-    }
-  });
-
-});
+// // //Create blogs
+// // app.post("./createBlog", function(req,res) {
+// //   const post = {title:"" ,body:""};
+// //   const sql = `INSERT INTO blogs SET ?`;
+// //   const query = db.query(sql, post, function(err, result){
+// //     if(err){
+// //       console.log(err);
+// //     }else{
+// //       res.send("1 post added");
+// //     }
+// //   })
+// // });
+//
+// app.post("/blogs", function(req, res){
+//   db.query('SELECT * FROM blogs', function(err, results){
+//     if(err){
+//       console.log(err);
+//     }else{
+//       res.send(results);
+//     }
+//   })
+// });
+//
+// //Select single blog by blog id
+// app.post("/singleBlog/:blogId", function(req, res){
+//   const blogId = req.params.blogId;
+//
+//   if(isNaN(Number(blogId))){
+//     return res.status(400).json({err: "Number only, please!"})
+//   }
+//
+//   db.query(`SELECT * FROM blogs WHERE blogId = ?`, [blogId], function(err, result){
+//     if(err){
+//       console.log(err);
+//     }else{
+//       res.send(result);
+//     }
+//   });
+//
+// });
 
 //Select all events table
 app.get("/allEvents", function(req, res){
-  makeConnection();
   const query = db.query(`SELECT * FROM event`, function(err, results){
     if (err){
       console.log(err);
       res.send({message:"Internal Server error!"})
     }else{
-      res.send({message:"Success", event:results})
-      db.end();
+      res.send({message:"Success", event:results});
     }
   });
 });
 
 //Select from table by userId/sno
 app.post("/singleEvent/:eventId", function(req, res){
-  makeConnection();
   const eventId = req.params.eventId;
 
   if(isNaN(Number(eventId))){
@@ -115,15 +112,11 @@ app.post("/singleEvent/:eventId", function(req, res){
       res.send({message: "Internal server error!"})
     }else{
       res.send({message: "Success", event: result});
-      db.end();
     }
   });
 });
 
-
 app.post("/checkRegisteredStudents/:eventId/:userId", function(req, res){
-  makeConnection();
-
   const eventId = req.params.eventId;
   const userId = req.params.userId;
 
@@ -133,15 +126,11 @@ app.post("/checkRegisteredStudents/:eventId/:userId", function(req, res){
       res.send({message: "Internal server error!"})
     }else{
       res.send({message: "Success"});
-      res.send(result);
-      db.end();
     }
   });
 });
 
 app.post("/postDetailDashboard/:eventId/:userId", function(req, res){
-  makeConnection();
-
 
   let sql = `INSERT INTO dashboard_event_participant (id, eventId, userId) VALUES (?)`
   let values = [7, req.params.eventId, req.params.userId];
@@ -151,7 +140,6 @@ app.post("/postDetailDashboard/:eventId/:userId", function(req, res){
       res.send({message: "Internal server error!"})
     }else{
       res.send({message: "Success"});
-      db.end();
     }
   })
 });
