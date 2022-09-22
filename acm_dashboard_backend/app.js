@@ -35,6 +35,7 @@ app.use(
 
 //Fetch user doc
 app.post("/fetchUserDoc", function(req, res){
+
   db.query('SELECT * FROM dashboardusers', function(err, results){
     if(err){
       console.log(err);
@@ -42,6 +43,8 @@ app.post("/fetchUserDoc", function(req, res){
       res.send(results);
     }
   })
+
+
 });
 
 // // //Create blogs
@@ -87,6 +90,7 @@ app.post("/fetchUserDoc", function(req, res){
 
 //Select all events table
 app.get("/allEvents", function(req, res){
+
   const query = db.query(`SELECT * FROM event`, function(err, results){
     if (err){
       console.log(err);
@@ -95,6 +99,9 @@ app.get("/allEvents", function(req, res){
       res.send({message:"Success", event:results});
     }
   });
+
+
+
 });
 
 //Select from table by userId/sno
@@ -114,11 +121,19 @@ app.post("/singleEvent/:eventId", function(req, res){
       res.send({message: "Success", event: result});
     }
   });
+
 });
 
 app.post("/checkRegisteredStudents/:eventId/:userId", function(req, res){
   const eventId = req.params.eventId;
   const userId = req.params.userId;
+
+
+  if(isNaN(Number(eventId))){
+    return res.status(400).json({err: "Number only, please!"});
+  }else if(isNaN(Number(userId))){
+    return res.status(400).json({err: "Number only please!"});
+  }
 
   let sql = `SELECT * FROM dashboard_event_participant WHERE eventId= ? AND userId= ? `;
   let query = db.query(sql, [eventId, userId], function(err, result){
@@ -128,9 +143,16 @@ app.post("/checkRegisteredStudents/:eventId/:userId", function(req, res){
       res.send({message: "Success"});
     }
   });
+
 });
 
 app.post("/postDetailDashboard/:eventId/:userId", function(req, res){
+
+  if (isNaN(Number(req.params.eventId))){
+    return res.status(400).json({err: "Number only, please!"});
+  }else if (isNaN(Number(req.params.userId))){
+    return res.status(400).json({err: "Number only, please!"});
+  }
 
   let sql = `INSERT INTO dashboard_event_participant (id, eventId, userId) VALUES (?)`
   let values = [7, req.params.eventId, req.params.userId];
@@ -142,6 +164,8 @@ app.post("/postDetailDashboard/:eventId/:userId", function(req, res){
       res.send({message: "Success"});
     }
   })
+
+
 });
 
 
