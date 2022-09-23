@@ -72,7 +72,7 @@ app.post("/createBlog", (req, res) =>
   db.query("SELECT * FROM blogs", function (err, results) {
     if (!err) {
       var sql =
-        "INSERT INTO blogs (blogTitle, userName, userEmail) VALUES ('Company Inc', 'Highway', 'gauranshi03@gmail.com')";
+        "INSERT INTO blogs (userEmail, userName, blogTitle, coverImage, content, tags, isDraft, approved) VALUES ( 'gauranshi03@gmail.com', 'gauranshi', 'Blog1','','this is first blog')";
       db.query(sql, function (err, result) {
         if (err) throw err;
         //console.log("1 record inserted");
