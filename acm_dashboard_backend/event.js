@@ -1,9 +1,9 @@
 require('dotenv').config();
-const flash = require("connect-flash");
+// const flash = require("connect-flash");
 const express = require("express");
 const cors = require("cors");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").strategy;
+// const passport = require("passport");
+// const LocalStrategy = require("passport-local").strategy;
 const mysql = require("mysql");
 
 //Create connection
@@ -32,20 +32,6 @@ app.use(
     credentials: true
   })
 )
-
-//Fetch user doc
-app.post("/fetchUserDoc", function(req, res){
-
-  db.query('SELECT * FROM dashboardusers', function(err, results){
-    if(err){
-      console.log(err);
-    }else{
-      res.send(results);
-    }
-  })
-
-
-});
 
 // // //Create blogs
 // // app.post("./createBlog", function(req,res) {
