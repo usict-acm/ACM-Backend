@@ -90,7 +90,7 @@ app.post("/login", function (req, res) {
 });
 
 app.post("/register", function (req, res) {
-  const password = "gypsy";
+  const password = req.body.password;
 
   bcrypt.hash(password, saltRounds, function (err, hash) {
     const hashed_password = hash;
