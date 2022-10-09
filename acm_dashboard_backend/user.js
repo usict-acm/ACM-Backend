@@ -66,7 +66,10 @@ app.post("/login", function (req, res) {
   //const emailId = req.params.email;
   const email = req.body.email;
   const user = { id: email };
-  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "5m",
+  });
+  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
   //res.json({ accessToken: accessToken });
   db.query(
     `SELECT * FROM dashboardusers WHERE email = ?`,
@@ -77,7 +80,7 @@ app.post("/login", function (req, res) {
       } else {
         if ((result.name = "Test User")) {
           //res.send({ message: "Success" });
-          res.json({ accessToken: accessToken });
+          res.json({ accessToken: accessToken, refreshToken: refreshToken });
         } else {
           res.send({ message: "Abbe glt username hai" });
         }
