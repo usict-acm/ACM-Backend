@@ -1,6 +1,9 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //Create connection
 const db = mysql.createConnection({
@@ -22,6 +25,8 @@ db.connect(function(err){
   
 const app = express();
 
+app.use(express.json());
+
 app.use(
 cors({
     origin: "*",
@@ -33,15 +38,18 @@ cors({
 app.post("/fetchUserDoc/:email", function(req, res){
     const emailId = req.params.email;
     // const result = fetchUserByEmail(emailId);
-
+    try{
     db.query('SELECT * FROM dashboardusers WHERE email = ?', [emailId], function(err, result){
       if(err){
         console.log(err);
       }else{
-        res.send(result);
+        res.json(result);
       }
     })
     // res.send(result);
+    }catch{
+        res.status(500).send("Internal server error");
+    }
   
 });
 
@@ -56,38 +64,92 @@ app.post("/fetchUserDoc/:email", function(req, res){
 // }
 
 
-app.post("/login/:email", function(req, res){
-// //     const emailId = req.params.email;
+app.post("/login", async function(req, res){
 
-// //     const data = fetchUserByEmail(emailId);
+    // try{
+    //     const {email, password} = req.body;
+    //     const user = db.query(`SELECT * FROM dashboardusers WHERE email = ?`, [email]);
+    //     if(user){
+    //         const validPassword = await bcrypt.compare(password, user.password);
+    //         if(validPassword){
+    //             res.status(200).json({message: "Success"});
+    //         }else{
+    //             res.send("Wrong password");
+    //         }
+    //     }else{
+    //         res.send("User not found");
+    //     }
+    // }catch(e){
+    //     console.log(e);
+    //     res.status(500).send("Internal server error");
+    // }
 
-// //     if(data.password == )
-
-    const emailId = req.params.email;
+    const emailId = req.body.email;
 
     db.query(`SELECT * FROM dashboardusers WHERE email = ?`, [emailId], function(err, result){
-        if(err){
-            console.log(err);
-        }else{
-            if( result.name = "Test User" ){
-                res.send({message: "Success"});
-            }else{
-                res.send({message: "Abbe glt username hai"});
-            }
+        if(result == null){
+            return res.status(400).send("User not found");
         }
-    })
+        try{
+            if(bcrypt.compare(req.body.password, result.password)){
+                const user = {email: result.email};
+                const accessToken = generateAccessToken(user);
+                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+                res.json({
+                message:"Success", 
+                accessToken: accessToken, 
+                refreshToken: refreshToken
+                });
+
+            }else{
+                res.status(500).send("Wrong password");
+            }
+            // bcrypt.compare(req.body.password, result.password, function(err, result){
+            //     if(err){
+            //         res.status(500).send([]);
+            //         console.log(err);
+            //     }else if(result){
+            //         res.status(200).json({message: "Success"});
+            //     }else{
+            //         res.status(400).send("Incorrect password");
+            //     }
+            // });
+
+        }catch{
+            res.status(500).send("Internal Server error");
+            console.log(err);
+        }
+    }
+    )
 
 });
 
-app.post("/register", function(req,res){
+function generateAccessToken(user){
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1m'})
+}
 
-    db.query(`INSERT INTO dashboardusers (userId, email, password, name, branch, course, rollNo, college) VALUES ('69', 'abc@test.com', '69', 'abcdef', 'abc', 'AI-DS', '69', 'USAR' )`, function(err, result){
-        if(err){
-            console.log(err);
-        }else{
-            res.send({message: "Success"});
-        }
-    });
+
+app.post("/register", async function(req,res){
+    try{
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash("abcd", salt)
+        db.query(`INSERT INTO dashboardusers (userId, email, password, name, branch, course, rollNo, college) VALUES ('69', 'abc@test.com', ?, 'abcdef', 'abc', 'AI-DS', '69', 'USAR' )`,
+            [hashedPassword],
+            function(err, result){
+                if(err){
+                    console.log(err);
+                }else{
+                    res.status(200).json({message: "Success"});
+                } 
+            });
+        // console.log(salt);
+        // console.log(hashedPassword);
+        
+
+    }catch{
+        res.status(500).send("Internal Server error"); 
+    }
+
 });
 
 app.post("/update/:email", function(req,res){
