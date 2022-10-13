@@ -1,12 +1,13 @@
-const express= require('express');
+const express = require("express");
 // const eventRoutes = require('./routes/eventRoutes');
-const blogRoutes= require('./routes/blogRoutes');
+const blogRoutes = require("./routes/blogRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 // const userRoutes = require('./routes/userRoutes');
 const mysql = require("mysql");
 
-const app=express();
+const app = express();
 
-// app.use(eventRoutes);
+app.use(eventRoutes);
 app.use(blogRoutes);
 // app.use(userRoutes);
 
@@ -26,11 +27,11 @@ db.connect(function (err) {
   }
 });
 
-app.get('/', (req,res) => {
-    // res.send(`Your email: ${req.user.email}`);
-    res.send("Hello");
+app.get("/", (req, res) => {
+  // res.send(`Your email: ${req.user.email}`);
+  res.send("Hello");
 });
 
-app.listen(3000,() => {
-    console.log("listning on port 3000");
+app.listen(3000, () => {
+  console.log("listning on port 3000");
 });

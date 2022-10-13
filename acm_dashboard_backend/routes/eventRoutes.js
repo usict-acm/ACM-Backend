@@ -1,6 +1,7 @@
-require('dotenv').config();
+require("dotenv").config();
 // const flash = require("connect-flash");
 const express = require("express");
+const router = express.Router();
 const cors = require("cors");
 // const passport = require("passport");
 // const LocalStrategy = require("passport-local").strategy;
@@ -8,30 +9,28 @@ const mysql = require("mysql");
 
 //Create connection
 const db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : process.env.PASSWORD,
-  database : 'acmbackend'
+  host: "localhost",
+  user: "root",
+  password: process.env.PASSWORD,
+  database: "acmbackend",
 });
 
-
-db.connect(function(err){
-  if(err){
+db.connect(function (err) {
+  if (err) {
     console.log(err);
-  }else{
+  } else {
     console.log("mysql connected");
   }
 });
-
 
 const app = express();
 
 app.use(
   cors({
     origin: "*",
-    credentials: true
+    credentials: true,
   })
-)
+);
 
 // // //Create blogs
 // // app.post("./createBlog", function(req,res) {
@@ -75,86 +74,76 @@ app.use(
 // });
 
 //Select all events table
-app.get("/allEvents", function(req, res){
-
-  const query = db.query(`SELECT * FROM event`, function(err, results){
-    if (err){
+router.get("/allEvents", function (req, res) {
+  db.query(`SELECT * FROM event`, function (err, results) {
+    if (err) {
       console.log(err);
-      res.send({message:"Internal Server error!"})
-    }else{
-      res.send({message:"Success", event:results});
+      res.send({ message: "Internal Server error!" });
+    } else {
+      res.send({ message: "Success", event: results });
     }
   });
-
-
-
 });
 
 //Select from table by userId/sno
-app.post("/singleEvent/:eventId", function(req, res){
+router.post("/singleEvent/:eventId", function (req, res) {
   const eventId = req.params.eventId;
 
-  if(isNaN(Number(eventId))){
-    return res.status(400).json({err: "Number only, please!"})
+  if (isNaN(Number(eventId))) {
+    return res.status(400).json({ err: "Number only, please!" });
   }
 
   const sql = `SELECT * FROM event WHERE sno = ?`;
-  const query = db.query(sql, [eventId], function(err, result){
-    if (err){
+  const query = db.query(sql, [eventId], function (err, result) {
+    if (err) {
       console.log(err);
-      res.send({message: "Internal server error!"})
-    }else{
-      res.send({message: "Success", event: result});
+      res.send({ message: "Internal server error!" });
+    } else {
+      res.send({ message: "Success", event: result });
     }
   });
-
 });
 
-app.post("/checkRegisteredStudents/:eventId/:userId", function(req, res){
+router.post("/checkRegisteredStudents/:eventId/:userId", function (req, res) {
   const eventId = req.params.eventId;
   const userId = req.params.userId;
 
-
-  if(isNaN(Number(eventId))){
-    return res.status(400).json({err: "Number only, please!"});
-  }else if(isNaN(Number(userId))){
-    return res.status(400).json({err: "Number only please!"});
+  if (isNaN(Number(eventId))) {
+    return res.status(400).json({ err: "Number only, please!" });
+  } else if (isNaN(Number(userId))) {
+    return res.status(400).json({ err: "Number only please!" });
   }
 
   let sql = `SELECT * FROM dashboard_event_participant WHERE eventId= ? AND userId= ? `;
-  let query = db.query(sql, [eventId, userId], function(err, result){
+  let query = db.query(sql, [eventId, userId], function (err, result) {
     if (err) {
-      res.send({message: "Internal server error!"})
-    }else{
-      res.send({message: "Success"});
+      res.send({ message: "Internal server error!" });
+    } else {
+      res.send({ message: "Success" });
     }
   });
-
 });
 
-app.post("/postDetailDashboard/:eventId/:userId", function(req, res){
-
-  if (isNaN(Number(req.params.eventId))){
-    return res.status(400).json({err: "Number only, please!"});
-  }else if (isNaN(Number(req.params.userId))){
-    return res.status(400).json({err: "Number only, please!"});
+router.post("/postDetailDashboard/:eventId/:userId", function (req, res) {
+  if (isNaN(Number(req.params.eventId))) {
+    return res.status(400).json({ err: "Number only, please!" });
+  } else if (isNaN(Number(req.params.userId))) {
+    return res.status(400).json({ err: "Number only, please!" });
   }
 
-  let sql = `INSERT INTO dashboard_event_participant (id, eventId, userId) VALUES (?)`
+  let sql = `INSERT INTO dashboard_event_participant (id, eventId, userId) VALUES (?)`;
   let values = [7, req.params.eventId, req.params.userId];
-  let query = db.query(sql, [values], function(err, result){
-    if(err){
+  let query = db.query(sql, [values], function (err, result) {
+    if (err) {
       console.log(err);
-      res.send({message: "Internal server error!"})
-    }else{
-      res.send({message: "Success"});
+      res.send({ message: "Internal server error!" });
+    } else {
+      res.send({ message: "Success" });
     }
-  })
-
-
+  });
 });
 
-
-app.listen("3000", function(){
-  console.log("Server started on port 3000.");
-})
+// app.listen("3000", function () {
+//   console.log("Server started on port 3000.");
+// });
+module.exports = router;

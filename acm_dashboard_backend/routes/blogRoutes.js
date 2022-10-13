@@ -17,7 +17,7 @@ db.connect(function (err) {
   }
 });
 
-router.post("/blog/create", async(req, res) =>
+router.post("/blog/create", async (req, res) =>
   db.query("SELECT * FROM blogs", function (err, results) {
     if (!err) {
       var sql =
@@ -33,15 +33,13 @@ router.post("/blog/create", async(req, res) =>
     }
   })
 );
-
-router.get("/blogs", async(req, res) => {
+router.get("/blogs", async (req, res) => {
   db.query("SELECT * FROM blogs", function (err, result, fields) {
     if (err) throw err;
     //console.log(result);
     res.send(result);
   });
 });
-
 router.post("/singleBlog/:blogId", function (req, res) {
   const blogId = req.params.blogId;
 
@@ -62,9 +60,9 @@ router.post("/singleBlog/:blogId", function (req, res) {
   );
 });
 
-router.post("/updateBlog", async(req, res) => {
+router.post("/updateBlog", async (req, res) => {
   var sql =
-    "UPDATE blogs SET blogTitle = 'Updated Title' WHERE userEmail = 'gauranshi3@gmail.com'";
+    "UPDATE blogs SET blogTitle = 'Updated' WHERE userEmail = 'gauranshi03@gmail.com'";
   db.query(sql, function (err, result) {
     if (err) throw err;
     //console.log(result.affectedRows + " record(s) updated");
@@ -72,4 +70,4 @@ router.post("/updateBlog", async(req, res) => {
   });
 });
 
-module.exports= router;
+module.exports = router;
