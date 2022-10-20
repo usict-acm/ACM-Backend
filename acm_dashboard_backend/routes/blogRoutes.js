@@ -17,22 +17,18 @@ db.connect(function (err) {
   }
 });
 
-router.post("/blog/create", async (req, res) =>
-  db.query("SELECT * FROM blogs", function (err, results) {
-    if (!err) {
-      var sql =
-        "INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( 'gauranshi03@gmail.com', 'gauranshi', 'Blog1','this is first blog')";
-      db.query(sql, function (err, result) {
-        if (err) throw err;
-        //console.log("1 record inserted");
-        res.send(result);
-      });
-    } else {
-      //console.log(err);
-      console.log("Cannot post " + " /createBlog");
-    }
-  })
-);
+router.post("/blog/create", async (req, res) => {
+  const email = req.body.email;
+  const name = req.body.name;
+  const title = req.body.title;
+  const content = req.body.content;
+  var sql = `INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( ?, ?, ?, ?)`;
+  db.query(sql, [email, name, title, content], function (err, result) {
+    if (err) throw err;
+    res.send(result);
+    //console.log(req);
+  });
+});
 router.get("/blogs", async (req, res) => {
   db.query("SELECT * FROM blogs", function (err, result, fields) {
     if (err) throw err;
