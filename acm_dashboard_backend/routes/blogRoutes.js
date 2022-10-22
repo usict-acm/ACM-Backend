@@ -17,16 +17,12 @@ db.connect(function (err) {
   }
 });
 
-router.post("/blog/create", async (req, res) =>{
-  const email = req.body.email;
-  // const userName = req.body.name;
-  const blogTitle = req.body.title;
-  const content = req.body.content;
+router.post("/blog/create", async (req, res) =>
   db.query("SELECT * FROM blogs", function (err, results) {
     if (!err) {
       var sql =
-        "INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( ?, 'Aditya', ?, ?)";
-      db.query(sql, [email, blogTitle, content] , function (err, result) {
+        "INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( 'gauranshi03@gmail.com', 'gauranshi', 'Blog1','this is first blog')";
+      db.query(sql, function (err, result) {
         if (err) throw err;
         //console.log("1 record inserted");
         res.send(result);
@@ -36,7 +32,6 @@ router.post("/blog/create", async (req, res) =>{
       console.log("Cannot post " + " /createBlog");
     }
   })
-}
 );
 router.get("/blogs", async (req, res) => {
   db.query("SELECT * FROM blogs", function (err, result, fields) {
