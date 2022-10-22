@@ -17,12 +17,16 @@ db.connect(function (err) {
   }
 });
 
-router.post("/blog/create", async (req, res) =>
+router.post("/blog/create", async (req, res) =>{
+  const email = req.body.email;
+  // const userName = req.body.name;
+  const blogTitle = req.body.title;
+  const content = req.body.content;
   db.query("SELECT * FROM blogs", function (err, results) {
     if (!err) {
       var sql =
-        "INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( 'gauranshi03@gmail.com', 'gauranshi', 'Blog1','this is first blog')";
-      db.query(sql, function (err, result) {
+        "INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( ?, 'Aditya', ?, ?)";
+      db.query(sql, [email, blogTitle, content] , function (err, result) {
         if (err) throw err;
         //console.log("1 record inserted");
         res.send(result);
@@ -32,6 +36,7 @@ router.post("/blog/create", async (req, res) =>
       console.log("Cannot post " + " /createBlog");
     }
   })
+}
 );
 router.get("/blogs", async (req, res) => {
   db.query("SELECT * FROM blogs", function (err, result, fields) {
@@ -40,8 +45,8 @@ router.get("/blogs", async (req, res) => {
     res.send(result);
   });
 });
-router.post("/singleBlog/:blogId", function (req, res) {
-  const blogId = req.params.blogId;
+router.post("/singleBlog", function (req, res) {
+  const blogId = req.body.blogId;
 
   if (isNaN(Number(blogId))) {
     return res.status(400).json({ err: "Number only, please!" });
@@ -62,7 +67,7 @@ router.post("/singleBlog/:blogId", function (req, res) {
 
 router.post("/updateBlog", async (req, res) => {
   var sql =
-    "UPDATE blogs SET blogTitle = 'Updated' WHERE userEmail = 'gauranshi03@gmail.com'";
+    `UPDATE blogs SET blogTitle = 'Updated' WHERE userEmail = 'adi@email.com'`;
   db.query(sql, function (err, result) {
     if (err) throw err;
     //console.log(result.affectedRows + " record(s) updated");
