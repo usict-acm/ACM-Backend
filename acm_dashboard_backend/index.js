@@ -3,7 +3,7 @@ const bodyparser = require("body-parser");
 // const eventRoutes = require('./routes/eventRoutes');
 const blogRoutes = require("./routes/blogRoutes");
 const eventRoutes = require("./routes/eventRoutes");
-// const userRoutes = require('./routes/userRoutes');
+// const userRoutes = require("./routes/userRoutes");
 const mysql = require("mysql");
 
 const app = express();
