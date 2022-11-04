@@ -1,9 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const bodyparser = require("body-parser");
-// const eventRoutes = require('./routes/eventRoutes');
 const blogRoutes = require("./routes/blogRoutes");
 const eventRoutes = require("./routes/eventRoutes");
-// const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/userRoutes");
 const mysql = require("mysql");
 
 const app = express();
@@ -11,8 +11,7 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 app.use(eventRoutes);
 app.use(blogRoutes);
-
-// app.use(userRoutes);
+app.use(userRoutes);
 app.use(express.json());
 //function blogInit (){}
 const db = mysql.createConnection({

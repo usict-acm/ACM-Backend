@@ -4,7 +4,7 @@ const cors = require("cors");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// const router = express.Router();
+const router = express.Router();
 //Create connection
 const db = mysql.createConnection({
   host: "localhost",
@@ -23,7 +23,7 @@ db.connect(function (err) {
 
 const app = express();
 
-app.use(express.json());
+// app.use(express.json());
 
 app.use(
   cors({
@@ -33,7 +33,7 @@ app.use(
 );
 
 //Fetch user doc
-app.post("/fetchUserDoc", function (req, res) {
+router.post("/fetchUserDoc", function (req, res) {
   const emailId = req.body.email;
   // const result = fetchUserByEmail(emailId);
   try {
@@ -64,25 +64,7 @@ app.post("/fetchUserDoc", function (req, res) {
 //     })
 // }
 
-app.post("/login", async function (req, res) {
-  // try{
-  //     const {email, password} = req.body;
-  //     const user = db.query(`SELECT * FROM dashboardusers WHERE email = ?`, [email]);
-  //     if(user){
-  //         const validPassword = await bcrypt.compare(password, user.password);
-  //         if(validPassword){
-  //             res.status(200).json({message: "Success"});
-  //         }else{
-  //             res.send("Wrong password");
-  //         }
-  //     }else{
-  //         res.send("User not found");
-  //     }
-  // }catch(e){
-  //     console.log(e);
-  //     res.status(500).send("Internal server error");
-  // }
-
+router.post("/login", async function (req, res) {
   const emailId = req.body.email;
   const password = req.body.password;
   //   const password = "gauranshi";
@@ -92,11 +74,13 @@ app.post("/login", async function (req, res) {
     [emailId],
     function (err, result) {
       if (result == null) {
+        console.log(result);
         return res.status(400).send("User not found");
       }
       try {
-        bcrypt.compare(password, result.password, (err, resu) => {
-          if (!err) {
+        // console.log(result[0]);
+        bcrypt.compare(password, result[0].password, (err, resu) => {
+          if (resu === true) {
             const user = { email: result.email };
             const accessToken = generateAccessToken(user);
             const refreshToken = jwt.sign(
@@ -114,6 +98,7 @@ app.post("/login", async function (req, res) {
               accessToken: accessToken,
               refreshToken: refreshToken,
             });
+            console.log(resu);
           } else {
             console.log(req.body);
             console.log(err);
@@ -143,7 +128,7 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
 }
 
-app.post("/register", async function (req, res) {
+router.post("/register", async function (req, res) {
   try {
     const id = req.body.id;
     const email = req.body.email;
@@ -174,7 +159,7 @@ app.post("/register", async function (req, res) {
   }
 });
 
-app.post("/update", function (req, res) {
+router.post("/update", function (req, res) {
   const emailId = req.body.email;
   // what to update?
 
@@ -191,7 +176,7 @@ app.post("/update", function (req, res) {
   );
 });
 
-app.listen("3000", function () {
-  console.log("Server started on port 3000.");
-});
-// module.exports = router;
+// app.listen("3000", function () {
+//   console.log("Server started on port 3000.");
+// });
+module.exports = router;
