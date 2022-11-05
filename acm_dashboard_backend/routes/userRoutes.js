@@ -105,17 +105,6 @@ router.post("/login", async function (req, res) {
             res.status(400).json({ message: "false password" });
           }
         });
-
-        // bcrypt.compare(req.body.password, result.password, function(err, result){
-        //     if(err){
-        //         res.status(500).send([]);
-        //         console.log(err);
-        //     }else if(result){
-        //         res.status(200).json({message: "Success"});
-        //     }else{
-        //         res.status(400).send("Incorrect password");
-        //     }
-        // });
       } catch {
         res.status(500).send("Internal Server error");
         console.log(err);
@@ -159,23 +148,62 @@ router.post("/register", async function (req, res) {
   }
 });
 
+// router.post("/update", function (req, res) {
+//   const emailId = req.body.email;
+//   // what to update?
+
+//   db.query(
+//     `UPDATE dashboardusers SET college = 'University School of automation and robotics' WHERE email = ?`,
+//     [emailId],
+//     function (err, result) {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send({ message: "updated" });
+//       }
+//     }
+//   );
+// });
 router.post("/update", function (req, res) {
   const emailId = req.body.email;
-  // what to update?
+  const name = req.body.name;
+  const acmId = req.body.acmId;
+  const profilePhoto = req.body.photo;
+  const updateCollege = req.body.college;
 
-  db.query(
-    `UPDATE dashboardusers SET college = 'University School of automation and robotics' WHERE email = ?`,
-    [emailId],
-    function (err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send({ message: "updated" });
-      }
-    }
-  );
+  try {
+    profilePhoto === null
+      ? db.query(
+          `UPDATE dashboardusers
+      SET name =?, acmMemberId = ?, college = ?
+      WHERE email = ?`,
+          [name, acmId, updateCollege, emailId],
+          function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.send({ message: "updated" });
+            }
+          }
+        )
+      : db.query(
+          `UPDATE dashboardusers
+      SET name =?, acmMemberId = ?, college = ?, profilePhoto=?
+      WHERE email = ?`,
+          [name, acmId, updateCollege, profilePhoto, emailId],
+          function (err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.send({ message: "updated" });
+            }
+          }
+        );
+  } catch {
+    console.log(error);
+    res.send("internal server error");
+  }
 });
-
 // app.listen("3000", function () {
 //   console.log("Server started on port 3000.");
 // });
