@@ -67,7 +67,6 @@ router.post("/fetchUserDoc", function (req, res) {
 router.post("/login", async function (req, res) {
   const emailId = req.body.email;
   const password = req.body.password;
-  //   const password = "gauranshi";
 
   db.query(
     `SELECT * FROM dashboardusers WHERE email = ?`,
@@ -78,7 +77,6 @@ router.post("/login", async function (req, res) {
         return res.status(400).send("User not found");
       }
       try {
-        // console.log(result[0]);
         bcrypt.compare(password, result[0].password, (err, resu) => {
           if (resu === true) {
             const user = { email: result.email };
@@ -204,7 +202,90 @@ router.post("/update", function (req, res) {
     res.send("internal server error");
   }
 });
-// app.listen("3000", function () {
-//   console.log("Server started on port 3000.");
-// });
+router.post("/forgotpassword", (req, res) => {
+  const emailId = req.body.email;
+  try {
+    db.query(
+      `SELECT * FROM dashboardusers WHERE email = ?`,
+      [emailId],
+      function (err, result) {
+        if (err) {
+          console.log(err);
+          // return res.status(400).send("User not found");
+        } else {
+          const secret = process.env.ACCESS_TOKEN_SECRET + result[0].password;
+          const payload = { email: result[0].email, id: result[0].userId };
+          const token = jwt.sign(payload, secret, { expiresIn: "15m" });
+          const link = `http://localhost:3000/resetpassword/${result[0].userId}/${token}`;
+          // console.log(result);
+          console.log(link);
+          res.send("resent link sent");
+        }
+      }
+    );
+  } catch {
+    res.status(500).send("Internal Server error");
+  }
+});
+router.get("/resetpassword/:id/:token", (req, res) => {
+  const { id, token } = req.params;
+  // console.log("id is ", id);
+  try {
+    db.query(
+      `SELECT * FROM dashboardusers WHERE userId = ?`,
+      [id],
+      function (err, result) {
+        // console.log(result[0].userId);
+        if (id == result[0].userId) {
+          const secret = process.env.ACCESS_TOKEN_SECRET + result[0].password;
+          const payload = jwt.verify(token, secret);
+          res.send(result[0].email);
+        } else {
+          res.send("Invalid id..");
+        }
+      }
+    );
+  } catch {
+    res.status(500).send("Internal Server error");
+  }
+});
+router.post("/resetpassword/:id/:token", (req, res) => {
+  const { id, token } = req.params;
+  const email = req.email;
+  const password = req.body.password;
+  // const confirmpassword = req.body.confirmpassword;
+  try {
+    db.query(
+      `SELECT * FROM dashboardusers WHERE userId = ?`,
+      [id],
+      async function (err, result) {
+        if (id == result[0].userId) {
+          const secret = process.env.ACCESS_TOKEN_SECRET + result[0].password;
+          const payload = jwt.verify(token, secret);
+          // const salt = await bcrypt.genSalt();
+          // const hashedPassword = await bcrypt.hash(password, salt);
+          db.query(
+            `UPDATE dashboardusers
+          SET password=?
+          WHERE email = ?`,
+            [password, email],
+            function (err, result) {
+              if (err) {
+                console.log(err);
+              } else {
+                res.send({ message: "updated" });
+              }
+            }
+          );
+          // result[0].password = password;
+          // res.send(result);
+        } else {
+          res.send("Invalid id..");
+        }
+      }
+    );
+  } catch {
+    res.status(500).send("Internal Server error");
+  }
+});
 module.exports = router;
