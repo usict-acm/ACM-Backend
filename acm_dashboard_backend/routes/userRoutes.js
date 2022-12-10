@@ -219,7 +219,7 @@ router.post("/forgotpassword", (req, res) => {
           const link = `http://localhost:3000/resetpassword/${result[0].userId}/${token}`;
           // console.log(result);
           console.log(link);
-          res.send("resent link sent");
+          res.send({ message: "resent link sent", url: link });
         }
       }
     );
@@ -251,7 +251,7 @@ router.get("/resetpassword/:id/:token", (req, res) => {
 });
 router.post("/resetpassword/:id/:token", (req, res) => {
   const { id, token } = req.params;
-  const email = req.email;
+  const email = req.body.email;
   const password = req.body.password;
   // const confirmpassword = req.body.confirmpassword;
   try {
@@ -262,18 +262,20 @@ router.post("/resetpassword/:id/:token", (req, res) => {
         if (id == result[0].userId) {
           const secret = process.env.ACCESS_TOKEN_SECRET + result[0].password;
           const payload = jwt.verify(token, secret);
-          // const salt = await bcrypt.genSalt();
-          // const hashedPassword = await bcrypt.hash(password, salt);
+          const salt = await bcrypt.genSalt();
+          const hashedPassword = await bcrypt.hash(password, salt);
+          console.log(hashedPassword);
           db.query(
             `UPDATE dashboardusers
           SET password=?
           WHERE email = ?`,
-            [password, email],
+            [hashedPassword, email],
             function (err, result) {
               if (err) {
                 console.log(err);
               } else {
                 res.send({ message: "updated" });
+                // res.send(result[0].password);
               }
             }
           );
