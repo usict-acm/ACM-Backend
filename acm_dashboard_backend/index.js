@@ -13,6 +13,12 @@ app.use(eventRoutes);
 app.use(blogRoutes);
 app.use(userRoutes);
 app.use(express.json());
+app.use(function(req, res, next) {
+  app.setHeader('content-type', 'charset=utf-8');
+  return next();
+});
+
+
 //function blogInit (){}
 const db = mysql.createConnection({
   host: "localhost",
