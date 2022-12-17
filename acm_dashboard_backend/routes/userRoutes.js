@@ -125,12 +125,13 @@ router.post("/register", async function (req, res) {
     const course = req.body.course;
     const roll = req.body.roll;
     const college = req.body.college;
+    const acmMemberId = req.body.memberId;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     db.query(
-      `INSERT INTO dashboardusers (userId, email, password, name, branch, course, rollNo, college) VALUES (?, ?, ?, ?, ?, ?, ?, ? )`,
-      [id, email, hashedPassword, name, branch, course, roll, college],
+      `INSERT INTO dashboardusers (userId, email, password, name, acmMemberId, branch, course, rollNo, college) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )`,
+      [id, email, hashedPassword, name, acmMemberId, branch, course, roll, college],
       function (err, result) {
         if (err) {
           console.log(err);
