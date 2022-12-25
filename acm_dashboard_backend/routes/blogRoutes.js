@@ -18,16 +18,33 @@ db.connect(function (err) {
 });
 
 router.post("/blog/create", async (req, res) => {
-  const name = req.body.name;
+
   const email = req.body.email;
   const title = req.body.title;
   const content = req.body.content;
-  var sql = `INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( ?, ?, ?, ?)`;
-  db.query(sql, [email, name, title, content], function (err, result) {
-    if (err) throw err;
-    res.send(result);
-    //console.log(req);
-  });
+  
+  db.query(
+    `SELECT * FROM dashboardusers WHERE email=?`,
+    [email],
+    function(error, result){
+      if(error){
+        console.log(error);
+      }else{
+        if(result[0] == null){
+          return res.status(400).send({message: "Invalid request this user doesn't exist"});
+        }else{
+          var sql = `INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( ?, ?, ?, ?)`;
+          db.query(sql, [email, result[0].name, title, content], function (err, result) {
+            if (err) throw err;
+            res.send(result);
+            //console.log(req);
+          });  
+        }
+      }
+    }
+  )
+
+  
 });
 
 router.get("/blogs", async (req, res) => {
