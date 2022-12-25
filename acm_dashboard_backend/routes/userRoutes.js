@@ -72,40 +72,41 @@ router.post("/login", async function (req, res) {
     `SELECT * FROM dashboardusers WHERE email = ?`,
     [emailId],
     function (err, result) {
-      if (result == null) {
+      if (result[0] != null) {
+        try {
+          bcrypt.compare(password, result[0].password, (err, resu) => {
+            if (resu === true) {
+              const user = { email: result.email };
+              const accessToken = generateAccessToken(user);
+              const refreshToken = jwt.sign(
+                user,
+                process.env.REFRESH_TOKEN_SECRET,
+                { expiresIn: "2s" }
+              );
+              const userVer = jwt.verify(
+                refreshToken,
+                process.env.REFRESH_TOKEN_SECRET
+              );
+              console.log(userVer);
+              res.json({
+                message: "Success",
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+              });
+              console.log(resu);
+            } else {
+              console.log(req.body);
+              console.log(err);
+              res.status(400).json({ message: "false password" });
+            }
+          });
+        } catch {
+          res.status(500).send("Internal Server error");
+          console.log(err);
+        }
+      } else {
         console.log(result);
-        return res.status(400).send("User not found");
-      }
-      try {
-        bcrypt.compare(password, result[0].password, (err, resu) => {
-          if (resu === true) {
-            const user = { email: result.email };
-            const accessToken = generateAccessToken(user);
-            const refreshToken = jwt.sign(
-              user,
-              process.env.REFRESH_TOKEN_SECRET,
-              { expiresIn: "2s" }
-            );
-            const userVer = jwt.verify(
-              refreshToken,
-              process.env.REFRESH_TOKEN_SECRET
-            );
-            console.log(userVer);
-            res.json({
-              message: "Success",
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-            });
-            console.log(resu);
-          } else {
-            console.log(req.body);
-            console.log(err);
-            res.status(400).json({ message: "false password" });
-          }
-        });
-      } catch {
-        res.status(500).send("Internal Server error");
-        console.log(err);
+        return res.status(400).send({ message: "User doesn't exist" });
       }
     }
   );
@@ -131,7 +132,17 @@ router.post("/register", async function (req, res) {
     const hashedPassword = await bcrypt.hash(password, salt);
     db.query(
       `INSERT INTO dashboardusers (userId, email, password, name, acmMemberId, branch, course, rollNo, college) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )`,
-      [id, email, hashedPassword, name, acmMemberId, branch, course, roll, college],
+      [
+        id,
+        email,
+        hashedPassword,
+        name,
+        acmMemberId,
+        branch,
+        course,
+        roll,
+        college,
+      ],
       function (err, result) {
         if (err) {
           console.log(err);
@@ -169,39 +180,47 @@ router.post("/update", function (req, res) {
   const acmId = req.body.acmId;
   const profilePhoto = req.body.photo;
   const updateCollege = req.body.college;
-
-  try {
-    profilePhoto === null
-      ? db.query(
-          `UPDATE dashboardusers
-      SET name =?, acmMemberId = ?, college = ?
-      WHERE email = ?`,
-          [name, acmId, updateCollege, emailId],
-          function (err, result) {
-            if (err) {
-              console.log(err);
-            } else {
-              res.send({ message: "updated" });
-            }
-          }
-        )
-      : db.query(
-          `UPDATE dashboardusers
-      SET name =?, acmMemberId = ?, college = ?, profilePhoto=?
-      WHERE email = ?`,
-          [name, acmId, updateCollege, profilePhoto, emailId],
-          function (err, result) {
-            if (err) {
-              console.log(err);
-            } else {
-              res.send({ message: "updated" });
-            }
-          }
-        );
-  } catch {
-    console.log(error);
-    res.send("internal server error");
-  }
+  db.query(
+    `SELECT * FROM dashboardusers WHERE email = ?`,
+    [emailId],
+    function (err, result) {
+      if (result[0] == null) {
+        return res.status(400).send({ message: "User doesn't exist" });
+      } else {
+        try {
+          profilePhoto === null
+            ? db.query(
+                `UPDATE dashboardusers
+          SET name =?, acmMemberId = ?, college = ?
+          WHERE email = ?`,
+                [name, acmId, updateCollege, emailId],
+                function (err, result) {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    res.send({ message: "updated" });
+                  }
+                }
+              )
+            : db.query(
+                `UPDATE dashboardusers
+          SET name =?, acmMemberId = ?, college = ?, profilePhoto=?
+          WHERE email = ?`,
+                [name, acmId, updateCollege, profilePhoto, emailId],
+                function (err, result) {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    res.send({ message: "updated" });
+                  }
+                }
+              );
+        } catch {
+          res.send("internal server error");
+        }
+      }
+    }
+  );
 });
 router.post("/forgotpassword", (req, res) => {
   const emailId = req.body.email;
