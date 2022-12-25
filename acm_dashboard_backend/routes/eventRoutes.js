@@ -90,8 +90,8 @@ router.post("/postDetailDashboard", function (req, res) {
     return res.status(400).json({ err: "Number only, please!" });
   }
 
-  let sql = `INSERT INTO dashboard_event_participant (id, eventId, userId) VALUES (?)`;
-  let values = [7, req.body.eventId, req.body.userId];
+  let sql = `INSERT INTO dashboard_event_participant (eventId, userId) VALUES (?)`;
+  let values = [req.body.eventId, req.body.userId];
   let query = db.query(sql, [values], function (err, result) {
     if (err) {
       console.log(err);
