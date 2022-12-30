@@ -35,23 +35,32 @@ app.use(
 //Fetch user doc
 router.post("/fetchUserDoc", function (req, res) {
   const emailId = req.body.email;
-  // const result = fetchUserByEmail(emailId);
-  try {
-    db.query(
-      "SELECT * FROM dashboardusers WHERE email = ?",
-      [emailId],
-      function (err, result) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.json(result);
+  db.query(
+    `SELECT * FROM dashboardusers WHERE email = ?`,
+    [emailId],
+    function (err, result) {
+      if (result[0] == null) {
+        return res.status(400).send({ message: "User doesn't exist" });
+      } else {
+        try {
+          db.query(
+            "SELECT * FROM dashboardusers WHERE email = ?",
+            [emailId],
+            function (err, result) {
+              if (err) {
+                console.log(err);
+              } else {
+                res.json(result);
+              }
+            }
+          );
+          // res.send(result);
+        } catch {
+          res.status(500).send("Internal server error");
         }
       }
-    );
-    // res.send(result);
-  } catch {
-    res.status(500).send("Internal server error");
-  }
+    }
+  );
 });
 
 // function fetchUserByEmail(email){
