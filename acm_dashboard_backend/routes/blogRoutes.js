@@ -18,33 +18,36 @@ db.connect(function (err) {
 });
 
 router.post("/blog/create", async (req, res) => {
-
   const email = req.body.email;
   const title = req.body.title;
   const content = req.body.content;
-  
+
   db.query(
     `SELECT * FROM dashboardusers WHERE email=?`,
     [email],
-    function(error, result){
-      if(error){
+    function (error, result) {
+      if (error) {
         console.log(error);
-      }else{
-        if(result[0] == null){
-          return res.status(400).send({message: "Invalid request this user doesn't exist"});
-        }else{
+      } else {
+        if (result[0] == null) {
+          return res
+            .status(400)
+            .send({ message: "Invalid request this user doesn't exist" });
+        } else {
           var sql = `INSERT INTO blogs (userEmail, userName, blogTitle, content) VALUES ( ?, ?, ?, ?)`;
-          db.query(sql, [email, result[0].name, title, content], function (err, result) {
-            if (err) throw err;
-            res.send(result);
-            //console.log(req);
-          });  
+          db.query(
+            sql,
+            [email, result[0].name, title, content],
+            function (err, result) {
+              if (err) throw err;
+              res.send(result);
+              //console.log(req);
+            }
+          );
         }
       }
     }
-  )
-
-  
+  );
 });
 
 router.get("/blogs", async (req, res) => {
@@ -75,8 +78,10 @@ router.post("/singleBlog", function (req, res) {
 });
 
 router.post("/updateBlog", async (req, res) => {
-  var sql = `UPDATE blogs SET blogTitle = 'updatedTitle' WHERE userEmail = 'adi@email.com'`;
-  db.query(sql, function (err, result) {
+  const title = req.body.title;
+  const email = req.body.email;
+  var sql = `UPDATE blogs SET blogTitle = ? WHERE userEmail = ?`;
+  db.query(sql, [title, email], function (err, result) {
     if (err) throw err;
     //console.log(result.affectedRows + " record(s) updated");
     res.send(result);
