@@ -14,32 +14,32 @@ app.use(blogRoutes);
 app.use(userRoutes);
 app.use(express.json());
 app.use(function(req, res, next) {
-  app.setHeader('content-type', 'charset=utf-8');
-  return next();
+    app.setHeader('content-type', 'charset=utf-8');
+    return next();
 });
 
 
 //function blogInit (){}
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: process.env.PASSWORD,
-  database: "acmbackend",
+    host: "localhost",
+    user: "root",
+    password: process.env.PASSWORD,
+    database: "acmbackend",
 });
 
-db.connect(function (err) {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("mysql connected");
-  }
+db.connect(function(err) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("mysql connected");
+    }
 });
 
 app.get("/", (req, res) => {
-  // res.send(`Your email: ${req.user.email}`);
-  res.send("Hello");
+    // res.send(`Your email: ${req.user.email}`);
+    res.send("Hello");
 });
 
 app.listen(3000, () => {
-  console.log("listning on port 3000");
+    console.log("listning on port 3000");
 });
