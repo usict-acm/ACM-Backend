@@ -7,6 +7,17 @@ const teamRoutes = require("./routes/teamsRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
 const linkRoutes = require("./routes/linkRoutes");
 const blogRoutes = require("./routes/BlogRoutes");
+const db = require("./database");
+
+db.connect(function(err) {
+    if (err) {
+        console.log(err);
+        console.log("Cannot connect to mysql exiting now!");
+        process.exit(2);
+    } else {
+        console.log("mysql connected");
+    }
+});
 
 const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -19,5 +30,5 @@ app.use(linkRoutes);
 app.use(blogRoutes);
 //
 app.listen(3000, () => {
-  console.log("Server started on port 3000");
+    console.log("Server started on port 3000");
 });
