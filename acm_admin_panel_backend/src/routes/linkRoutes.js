@@ -1,5 +1,6 @@
 import * as express from 'express';
-import { query } from '../database.js';
+import db, { query } from '../database.js';
+import Exception from '../exception.js';
 
 const router = express.Router();
 
@@ -15,26 +16,61 @@ router.get("/linkTable", async (_req, res, next) => {
 
 router.post("/shorten", async (req, res, next) => {
 
-    var linkDetails = req.body.details;
-    var link = req.body.link;
-    var route = req.body.route;
-
-    const query = `INSERT INTO link (linkFor, originalLink, code, count) VALUES (?, ?, ?, ?)`;
-    const params = [linkDetails, link, route, count];
-    db.query(query, params, (error, result) => {
-        if (error) {
-            res.send(error);
-            return;
-        }
-    });
-
-    //Create new route that redirects to the url
-    router.get(`/${route}`, (req, res) => {
-        res.redirect(link);
-        count++;
-    });
-    res.send({ message: "Route Created", path: route });
+    try{
+        const linkDetails = req.body.details;
+        const originalLink = req.body.url;
+        let shortPath = req.body.shortPath;
+        
+        db.query(`SELECT * FROM link WHERE code = ?`, [shortPath], 
+        (error, results)=>{
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'An error occurred' });
+            } else if (results.length > 0){
+                res.status(400).json({ error: 'Short path already exists' });
+            } else {
+                //Insert new link into db
+                db.query(`INSERT INTO link (linkFor, originalLink, code, count) VALUES (?, ?, ?, ?)`,
+                [linkDetails, originalLink, shortPath, count],
+                (error)=>{
+                    if(error){
+                        console.log(error);
+                        res.status(500).json({error: 'An error occured'});
+                    } else {
+                        res.json({ shortPath });
+                    }
+                })
+            }
+        });
+    }catch(e){
+        return next(new Exception(500, e.toString()));
+    }
+    
 
 });
+
+
+router.get(':/shortPath', (req, res)=>{
+    const shortPath = req.params.shortPath;
+
+    //find original link
+    try{
+        db.query(`SELECT * FROM link WHERE code = ?`, [shortPath],
+        (error, results)=>{
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'An error occurred' });
+            } else if (results.length === 0) {
+                res.status(400).json({ error: 'Short path not found' });
+            } else {
+                const originalLink = results[0].originalLink;
+                res.redirect(originalLink);
+            }
+        });
+    }catch{
+        res.json({error: 'Internal server error!'});
+    }
+
+})
 
 export default router;
