@@ -1,21 +1,19 @@
-const express = require("express");
+import * as express from 'express';
+import { query } from '../database.js';
+
 const router = express.Router();
-const app = express();
-const db = require("../database");
 
 let count = 0;
-
-router.get("/linkTable", (req, res) => {
-    db.query(`SELECT * FROM  link ORDER BY id DESC`, function(err, result) {
-        if (err) {
-            throw err;
-        } else {
-            res.json(result);
-        }
-    });
+router.get("/linkTable", async (_req, res, next) => {
+    try {
+        let result = await query(`SELECT * FROM  link ORDER BY id DESC`);
+        res.send(result);
+    } catch (e) {
+        return next(new Exception(400, e.toString()));
+    }
 });
 
-router.post("/shorten", (req, res) => {
+router.post("/shorten", async (req, res, next) => {
 
     var linkDetails = req.body.details;
     var link = req.body.link;
@@ -31,7 +29,7 @@ router.post("/shorten", (req, res) => {
     });
 
     //Create new route that redirects to the url
-    app.get(`/${route}`, (req, res) => {
+    router.get(`/${route}`, (req, res) => {
         res.redirect(link);
         count++;
     });
@@ -39,4 +37,4 @@ router.post("/shorten", (req, res) => {
 
 });
 
-module.exports = router;
+export default router;
