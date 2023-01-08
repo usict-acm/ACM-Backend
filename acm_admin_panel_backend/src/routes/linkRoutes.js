@@ -50,7 +50,7 @@ router.post("/shorten", async (req, res, next) => {
 });
 
 
-router.get(':/shortPath', (req, res)=>{
+router.get('/:shortPath', (req, res)=>{
     const shortPath = req.params.shortPath;
 
     //find original link
