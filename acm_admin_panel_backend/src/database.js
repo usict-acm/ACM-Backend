@@ -1,4 +1,5 @@
-const mysql = require("mysql");
+import { promisify } from "util";
+import mysql from 'mysql';
 
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST,
@@ -7,4 +8,7 @@ const db = mysql.createConnection({
     database: process.env.ACMDATABASE,
 });
 
-module.exports = db
+// black magic to enable async await
+export const query = promisify(db.query).bind(db);
+
+export default db;
