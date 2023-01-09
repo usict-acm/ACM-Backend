@@ -16,59 +16,62 @@ router.get("/linkTable", async (_req, res, next) => {
 
 router.post("/shorten", async (req, res, next) => {
 
-    try{
+    try {
         const linkDetails = req.body.details;
         const originalLink = req.body.url;
         let shortPath = req.body.shortPath;
-        
-        db.query(`SELECT * FROM link WHERE code = ?`, [shortPath], 
-        (error, results)=>{
-            if (error) {
-                console.error(error);
-                res.status(500).json({ error: 'An error occurred' });
-            } else if (results.length > 0){
-                res.status(400).json({ error: 'Short path already exists' });
-            } else {
-                //Insert new link into db
-                db.query(`INSERT INTO link (linkFor, originalLink, code, count) VALUES (?, ?, ?, ?)`,
-                [linkDetails, originalLink, shortPath, count],
-                (error)=>{
-                    if(error){
-                        console.log(error);
-                        res.status(500).json({error: 'An error occured'});
-                    } else {
-                        res.json({ shortPath });
-                    }
-                })
-            }
-        });
-    }catch(e){
-        return next(new Exception(500, e.toString()));
+        if (typeof (shortPath) !== 'string') {
+            return next(new Exception(400, "shortPath is not a string"));
+        }
+
+        db.query(`SELECT * FROM link WHERE code = ?`, [shortPath],
+            (error, results) => {
+                if (error) {
+                    console.error(error);
+                    res.status(500).json({ error: 'An error occurred' });
+                } else if (results.length > 0) {
+                    res.status(400).json({ error: 'Short path already exists' });
+                } else {
+                    //Insert new link into db
+                    db.query(`INSERT INTO link (linkFor, originalLink, code, count) VALUES (?, ?, ?, ?)`,
+                        [linkDetails, originalLink, shortPath, count],
+                        (error) => {
+                            if (error) {
+                                console.log(error);
+                                res.status(500).json({ error: 'An error occured' });
+                            } else {
+                                res.json({ shortPath });
+                            }
+                        })
+                }
+            });
+    } catch (e) {
+        return next(new Exception(400, e.toString()));
     }
-    
+
 
 });
 
 
-router.get('/:shortPath', (req, res)=>{
+router.get('/acm/:shortPath', (req, res) => {
     const shortPath = req.params.shortPath;
 
     //find original link
-    try{
+    try {
         db.query(`SELECT * FROM link WHERE code = ?`, [shortPath],
-        (error, results)=>{
-            if (error) {
-                console.error(error);
-                res.status(500).json({ error: 'An error occurred' });
-            } else if (results.length === 0) {
-                res.status(400).json({ error: 'Short path not found' });
-            } else {
-                const originalLink = results[0].originalLink;
-                res.redirect(originalLink);
-            }
-        });
-    }catch{
-        res.json({error: 'Internal server error!'});
+            (error, results) => {
+                if (error) {
+                    console.error(error);
+                    res.status(500).json({ error: 'An error occurred' });
+                } else if (results.length === 0) {
+                    res.status(400).json({ error: 'Short path not found' });
+                } else {
+                    const originalLink = results[0].originalLink;
+                    res.redirect(originalLink);
+                }
+            });
+    } catch (e) {
+        res.json({ error: 'Internal server error!' });
     }
 
 })
