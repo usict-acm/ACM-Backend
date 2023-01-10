@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Blog {
+  Sno      Int      @id @default(autoincrement())
+  Title    String   @db.VarChar(200)
+  Author   String   @db.VarChar(50)
+  Content  String   @db.MediumText
+  Category String   @db.VarChar(50)
+  Event    String?  @db.VarChar(100)
+  Image    String   @db.Text
+  Date     DateTime @db.Date
+
+  @@map("blog")
+}
+
+model Blogs {
+  blogId      Int      @id @default(autoincrement())
+  blogTitle   String   @db.VarChar(256)
+  coverImage  Bytes
+  userEmail   String   @db.VarChar(256)
+  userName    String   @db.VarChar(128)
+  content     Bytes
+  created     DateTime @default(now()) @db.Timestamp(0)
+  published   DateTime @default(now()) @db.Timestamp(0)
+  lastUpdated DateTime @default(now()) @db.Timestamp(0)
+  isDraft     Boolean
+  tags        String?  @db.Text
+  approved    Boolean  @default(false)
+
+  @@map("blogs")
+}
+
+model Certificate {
+  ID              Int
+  uniqueNo        String   @db.VarChar(20)
+  nameParticipant String   @db.VarChar(20)
+  email           String   @db.VarChar(255)
+  startDate       DateTime @db.Date
+  endDate         DateTime @db.Date
+  course          String   @db.VarChar(50)
+  enrollment_no   String   @db.VarChar(50)
+  event           String   @db.VarChar(50)
+  rank            String?  @db.VarChar(11)
+  college         String   @db.VarChar(50)
+
+  @@id([ID, uniqueNo])
+  @@map("certificate")
+}
+
+model ContactUs {
+  id      Int     @id @default(autoincrement())
+  name    String? @db.VarChar(100)
+  email   String? @db.VarChar(100)
+  mobile  String? @db.VarChar(100)
+  college String? @db.VarChar(200)
+  message String? @db.VarChar(500)
+
+  @@map("contactus")
+}
+
+model DashboardUsers {
+  userType     String?  @db.VarChar(50)
+  userId       Int      @id @default(autoincrement())
+  email        String   @db.VarChar(50)
+  password     String   @db.Char(128)
+  name         String   @db.VarChar(128)
+  profilePhoto Bytes?   @db.MediumBlob
+  acmMemberId  String?  @db.VarChar(128)
+  branch       String   @db.VarChar(128)
+  course       String   @db.VarChar(128)
+  rollNo       String   @db.VarChar(128)
+  college      String   @db.VarChar(128)
+  created      DateTime @default(now()) @db.Timestamp(0)
+  lastUpdated  DateTime @default(now()) @db.Timestamp(0)
+
+  @@map("dashboardusers")
+}
+
+model Event {
+  sno         Int      @id
+  name        String   @db.VarChar(200)
+  description String   @db.VarChar(10000)
+  startDate   DateTime @db.Date
+  endDate     DateTime @db.Date
+  button1Text String   @db.VarChar(255)
+  button1Link String   @db.VarChar(255)
+  button2Text String   @db.VarChar(200)
+  button2Link String   @db.VarChar(200)
+  partners    String   @db.VarChar(200)
+  speakers    String   @db.VarChar(200)
+  poster      String   @db.Text
+  year        Int
+  time        String   @db.VarChar(20)
+
+  @@map("event")
+}
+
+model EventPage {
+  sno            Int    @id @unique(map: "sno")
+  year           Int
+  numberOfEvents String @db.VarChar(200)
+  heading        String @db.VarChar(200)
+  more           String @db.VarChar(200)
+
+  @@map("eventpage")
+}
+
+model Fields {
+  id         Int     @id
+  formID     String  @db.Text
+  formName   String  @db.VarChar(255)
+  fieldName  String  @db.VarChar(255)
+  fieldType  String  @db.VarChar(255)
+  ifCheckbox String  @db.Text
+  ifRadio    String  @db.Text
+  required   Boolean
+
+  @@map("fields")
+}
+
+model Forms {
+  id       Int    @id
+  formID   String @db.Text
+  formName String @db.VarChar(255)
+
+  @@map("forms")
+}
+
+model Gallery {
+  Sno    Int      @id
+  source String   @db.Text
+  date   DateTime @db.Date
+
+  @@map("gallery")
+}
+
+model Invite {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(1000)
+  email String @db.VarChar(1000)
+
+  @@map("invite")
+}
+
+model JoinUs {
+  id            Int    @id @default(autoincrement())
+  firstname     String @db.VarChar(50)
+  lastname      String @db.VarChar(100)
+  email         String @db.VarChar(150)
+  phone_number  String @db.VarChar(50)
+  year          Int
+  acm_no        String @db.VarChar(20)
+  course        String @db.VarChar(50)
+  club          String @db.Text
+  enrollment_no String @db.VarChar(50)
+
+  @@map("join_us")
+}
+
+model Link {
+  id           Int    @id @default(autoincrement())
+  linkFor      String @db.VarChar(500)
+  originalLink String @db.VarChar(1000)
+  code         String @db.VarChar(500)
+  count        Int?
+
+  @@map("link")
+}
+
+model OfficeBearer {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.Text
+  image       String  @db.Text
+  designation String  @db.Text
+  linkedin    String? @db.Text
+  category    String  @db.Text
+
+  @@map("office_bearer")
+}
+
+model Team {
+  id          Int      @id @default(autoincrement())
+  image       String   @db.Text
+  name        String   @db.VarChar(50)
+  designation String   @db.VarChar(50)
+  linkedin    String?  @db.Text
+  github      String?  @db.Text
+  instagram   String?  @db.Text
+  year        Int      @db.Year
+  category    String   @db.VarChar(20)
+  added_on    DateTime @db.Date
+  active      Boolean  @default(true)
+
+  @@map("team")
+}
