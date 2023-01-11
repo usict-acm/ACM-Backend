@@ -8,9 +8,11 @@ import linkRoutes from './routes/linkRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
 import { prisma } from './database.js';
 import errorMiddleware from "./middleware/error.middleware.js";
+import cors from 'cors';
 
 async function main() {
     const app = express();
+    app.use(cors());
     app.use(express.urlencoded({
         extended: true
     }));

@@ -84,7 +84,7 @@ model DashboardUsers {
 }
 
 model Event {
-  sno         Int      @id
+  sno         Int      @id @default(autoincrement())
   name        String   @db.VarChar(200)
   description String   @db.VarChar(10000)
   startDate   DateTime @db.Date
@@ -103,7 +103,7 @@ model Event {
 }
 
 model EventPage {
-  sno            Int    @id @unique(map: "sno")
+  sno            Int    @id @unique(map: "sno") @default(autoincrement())
   year           Int
   numberOfEvents String @db.VarChar(200)
   heading        String @db.VarChar(200)
@@ -113,7 +113,7 @@ model EventPage {
 }
 
 model Fields {
-  id         Int     @id
+  id         Int     @id @default(autoincrement())
   formID     String  @db.Text
   formName   String  @db.VarChar(255)
   fieldName  String  @db.VarChar(255)
@@ -126,7 +126,7 @@ model Fields {
 }
 
 model Forms {
-  id       Int    @id
+  id       Int    @id @default(autoincrement())
   formID   String @db.Text
   formName String @db.VarChar(255)
 
@@ -134,7 +134,7 @@ model Forms {
 }
 
 model Gallery {
-  Sno    Int      @id
+  sno    Int      @id @default(autoincrement()) @map("Sno")
   source String   @db.Text
   date   DateTime @db.Date
 
