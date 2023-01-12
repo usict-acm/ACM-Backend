@@ -3,7 +3,7 @@ import { prisma } from '../database.js';
 import Exception from '../exception.js';
 
 const router = express.Router();
-router.get("/displayTeam", async (_req, res, next) => {
+router.get("/team", async (_req, res, next) => {
     try {
         let result = await prisma.team.findMany({ 
             orderBy: { id: 'desc' } });
@@ -12,7 +12,7 @@ router.get("/displayTeam", async (_req, res, next) => {
         return next(new Exception(400, e.toString()));
     }
 });
-router.post("/teams/insert", async (req, res, next) => {
+router.post("/team", async (req, res, next) => {
     try {
         const data = req.body;
         data.added_on = new Date();

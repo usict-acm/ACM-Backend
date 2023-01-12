@@ -5,7 +5,7 @@ import Exception from '../exception.js';
 
 const router = express.Router();
 
-router.get("/blogs", async (_req, res, next) => {
+router.get("/blog", async (_req, res, next) => {
     try {
         let result = await prisma.blogs.findMany();
         res.send(result);
@@ -14,9 +14,9 @@ router.get("/blogs", async (_req, res, next) => {
     }
 });
 
-router.post("/singleBlog", async (req, res, next) => {
+router.get("/blog/:id", async (req, res, next) => {
     try {
-        const blogId = Number(req.body.blogId);
+        const blogId = Number(req.params.id);
         let result = await prisma.blogs.findFirst(
             {
                 where:
@@ -28,9 +28,9 @@ router.post("/singleBlog", async (req, res, next) => {
     }
 });
 
-router.post("/deleteBlog", async (req, res, next) => {
+router.delete("/blog/:id", async (req, res, next) => {
     try {
-        const blogId = Number(req.body.id);
+        const blogId = Number(req.params.id);
         await prisma.blogs.delete(
             {
                 where:
@@ -42,7 +42,7 @@ router.post("/deleteBlog", async (req, res, next) => {
     }
 });
 
-router.post("/blog/create", async (req, res, next) => {
+router.post("/blog", async (req, res, next) => {
     try {
         const email = String(req.body.email);
         const title = String(req.body.title);
@@ -76,9 +76,9 @@ router.post("/blog/create", async (req, res, next) => {
 });
 
 
-router.post("/changeStatus", async (req, res, next) => {
+router.patch("/blog/:id/approve", async (req, res, next) => {
     try {
-        const blogId = Number(req.body.id);
+        const blogId = Number(req.params.id);
         await prisma.blogs.update(
             {
                 data:

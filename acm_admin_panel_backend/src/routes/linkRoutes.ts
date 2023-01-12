@@ -4,7 +4,7 @@ import Exception from '../exception.js';
 
 const router = express.Router();
 
-router.get("/linkTable", async (_req, res, next) => {
+router.get("/link", async (_req, res, next) => {
     try {
         let result = await prisma.link.findMany(
             {
@@ -16,7 +16,7 @@ router.get("/linkTable", async (_req, res, next) => {
     }
 });
 
-router.post("/shorten", async (req, res, next) => {
+router.post("/link", async (req, res, next) => {
 
     try {
         const linkFor = String(req.body.linkFor);
