@@ -55,6 +55,13 @@ router.get('/acm/:shortPath', async (req, res, next) => {
             }
         });
         if (result) {
+            await prisma.link.update({
+                where:
+                    { id: result.id },
+                data: {
+                    count: { increment: 1 }
+                }
+            });
             return res.redirect(result.originalLink);
         }
         return next(new Exception(404, "short link not found!"));

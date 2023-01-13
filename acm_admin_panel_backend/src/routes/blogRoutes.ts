@@ -16,11 +16,11 @@ router.get("/blog", async (_req, res, next) => {
 
 router.get("/blog/:id", async (req, res, next) => {
     try {
-        const blogId = Number(req.params.id);
+        const id = Number(req.params.id);
         let result = await prisma.blogs.findFirst(
             {
                 where:
-                    { blogId: blogId }
+                    { id: id }
             });
         res.send(result);
     } catch (e: any) {
@@ -30,11 +30,11 @@ router.get("/blog/:id", async (req, res, next) => {
 
 router.delete("/blog/:id", async (req, res, next) => {
     try {
-        const blogId = Number(req.params.id);
+        const id = Number(req.params.id);
         await prisma.blogs.delete(
             {
                 where:
-                    { blogId: blogId }
+                    { id: id }
             });
         res.send({ message: "Deleted" });
     } catch (e: any) {
@@ -76,15 +76,16 @@ router.post("/blog", async (req, res, next) => {
 });
 
 
-router.patch("/blog/:id/approve", async (req, res, next) => {
+router.patch("/blog/:id/approve/:approved", async (req, res, next) => {
     try {
-        const blogId = Number(req.params.id);
+        const id = Number(req.params.id);
+        const approved = Boolean(req.params.approved);
         await prisma.blogs.update(
             {
                 data:
-                    { approved: true },
+                    { approved: approved , isDraft: false},
                 where:
-                    { blogId: blogId }
+                    { id: id }
             });
         res.send({ message: "Blog approved" });
     } catch (e: any) {

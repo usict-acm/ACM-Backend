@@ -28,10 +28,10 @@ router.post("/announcement", async (req, res, next) => {
 //delete and member
 router.delete("/announcement/:id", async (req, res, next) => {
     try {
-        const sno = Number(req.params.id);
+        const id = Number(req.params.id);
         await prisma.event.deleteMany({
             where: {
-                sno : sno 
+                id : id 
             }
         });
         res.json({ message: "successfully deleted an annoucement" });

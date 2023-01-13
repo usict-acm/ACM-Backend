@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Blog {
-  Sno      Int      @id @default(autoincrement())
+  id       Int      @id @default(autoincrement()) @map("id")
   Title    String   @db.VarChar(200)
   Author   String   @db.VarChar(50)
   Content  String   @db.MediumText
@@ -21,7 +21,7 @@ model Blog {
 }
 
 model Blogs {
-  blogId      Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement()) @map("blogId")
   blogTitle   String   @db.VarChar(256)
   coverImage  Bytes
   userEmail   String   @db.VarChar(256)
@@ -67,7 +67,7 @@ model ContactUs {
 
 model DashboardUsers {
   userType     String?  @db.VarChar(50)
-  userId       Int      @id @default(autoincrement())
+  id           Int      @id @default(autoincrement()) @map("userId")
   email        String   @db.VarChar(50)
   password     String   @db.Char(128)
   name         String   @db.VarChar(128)
@@ -84,7 +84,7 @@ model DashboardUsers {
 }
 
 model Event {
-  sno         Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement()) @map("sno")
   name        String   @db.VarChar(200)
   description String   @db.VarChar(10000)
   startDate   DateTime @db.Date
@@ -103,7 +103,7 @@ model Event {
 }
 
 model EventPage {
-  sno            Int    @id @unique(map: "sno") @default(autoincrement())
+  id             Int    @id @unique(map: "sno") @default(autoincrement()) @map("sno")
   year           Int
   numberOfEvents String @db.VarChar(200)
   heading        String @db.VarChar(200)
@@ -134,7 +134,7 @@ model Forms {
 }
 
 model Gallery {
-  sno    Int      @id @default(autoincrement()) @map("Sno")
+  id     Int      @id @default(autoincrement()) @map("Sno")
   source String   @db.Text
   date   DateTime @db.Date
 
