@@ -46,7 +46,7 @@ router.post("/link", async (req, res, next) => {
 });
 
 
-router.get('/acm/:shortPath', async (req, res, next) => {
+router.get('/link/:shortPath', async (req, res, next) => {
     try {
         const shortPath: string = req.params.shortPath;
         let result = await prisma.link.findFirst({
