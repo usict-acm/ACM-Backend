@@ -4,15 +4,15 @@ import Exception from '../exception.js';
 
 const router = express.Router();
 
-router.get("/announcement", async (_req, res, next) => {
+router.get("/event", async (_req, res, next) => {
     try {
         let results = await prisma.event.findMany();
-        res.send({ message: "Success", event: results });
+        res.send(results);
     } catch (e) {
         return next(new Exception(400, "Internal server erro!"));
     }
 });
-router.post("/announcement", async (req, res, next) => {
+router.post("/event", async (req, res, next) => {
     try {
         let data = req.body;
         //   const github = req.body.github;
@@ -26,7 +26,7 @@ router.post("/announcement", async (req, res, next) => {
     }
 });
 //delete and member
-router.delete("/announcement/:id", async (req, res, next) => {
+router.delete("/event/:id", async (req, res, next) => {
     try {
         const id = Number(req.params.id);
         await prisma.event.deleteMany({
