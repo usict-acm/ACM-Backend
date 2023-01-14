@@ -71,4 +71,15 @@ router.get('/link/:shortPath', async (req, res, next) => {
 
 })
 
+router.delete('/link/:id', async (req, res, next) => {
+    try {
+        const id: number = Number(req.params.id);
+        await prisma.link.delete({ where: { id: id } });
+        res.json({ message: "deleted" });
+    } catch (e: any) {
+        return next(new Exception(400, e.toString()));
+    }
+
+})
+
 export default router;
