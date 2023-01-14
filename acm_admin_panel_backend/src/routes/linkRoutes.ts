@@ -37,7 +37,7 @@ router.post("/link", async (req, res, next) => {
                     count: 0
                 }
             });
-        res.send(code);
+        res.json({ code: code });
     } catch (e: any) {
         return next(new Exception(400, e.toString()));
     }
