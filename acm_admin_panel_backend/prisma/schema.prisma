@@ -38,8 +38,8 @@ model Blogs {
 }
 
 model Certificate {
-  ID              Int
-  uniqueNo        String   @db.VarChar(20)
+  id              Int      @id @default(autoincrement())
+  uniqueNo        String   @unique @db.VarChar(20)
   nameParticipant String   @db.VarChar(20)
   email           String   @db.VarChar(255)
   startDate       DateTime @db.Date
@@ -50,7 +50,6 @@ model Certificate {
   rank            String?  @db.VarChar(11)
   college         String   @db.VarChar(50)
 
-  @@id([ID, uniqueNo])
   @@map("certificate")
 }
 

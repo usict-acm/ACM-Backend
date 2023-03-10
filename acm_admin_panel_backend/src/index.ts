@@ -6,6 +6,7 @@ import teamRoutes from './routes/teamRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
 import linkRoutes from './routes/linkRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
+import certificateRoutes from './routes/certificateRoutes.js';
 import { prisma } from './database.js';
 import errorMiddleware from "./middleware/error.middleware.js";
 import cors from 'cors';
@@ -24,6 +25,7 @@ async function main() {
     app.use(announcementRoutes);
     app.use(linkRoutes);
     app.use(blogRoutes);
+    app.use(certificateRoutes);
     // for better error handling
     app.use(errorMiddleware);
     //
