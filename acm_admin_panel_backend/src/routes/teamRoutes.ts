@@ -25,6 +25,22 @@ router.get("/team/:id", async (req, res, next) => {
         return next(new Exception(400, e.toString()));
     }
 });
+
+router.patch("/team/:id", async (req, res, next) => {
+    try {
+        const id = Number(req.params.id);
+        const data = req.body;
+        let result = await prisma.team.update({
+            where: { id: id },
+            data: data,
+        });
+        res.json(result);
+    } catch (e: any) {
+        return next(new Exception(400, e.toString()));
+    }
+});
+
+
 router.post("/team", async (req, res, next) => {
     try {
         const data = req.body;
