@@ -14,5 +14,15 @@ router.get("/contactus", async (_req, res, next) => {
     }
 })
 
+router.delete("/contactus/:id", async (req, res, next) => {
+    try {
+        const id = Number(req.params.id);
+        await prisma.contactUs.delete({ where : { id : id}});
+        res.json({message :"done!"});
+    } catch (e : any) {
+        return next(new Exception(400, "Internal server erro!"));
+    }
+})
+
 
 export default router;
