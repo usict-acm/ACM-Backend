@@ -10,15 +10,20 @@ import certificateRoutes from './routes/certificateRoutes.js';
 import { prisma } from './database.js';
 import errorMiddleware from "./middleware/error.middleware.js";
 import cors from 'cors';
+import { requireJwtMiddleware } from "./middleware/auth.middleware.js";
 
 async function main() {
     const app = express();
+    // middlewares
     app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({
         extended: true
     }));
     app.use(express.json());
+    // uncomment this code to enable auth
+    //app.use(requireJwtMiddleware);
+
     app.use(joinUsRoutes);
     app.use(contactUsRoutes);
     app.use(teamRoutes);
@@ -26,9 +31,9 @@ async function main() {
     app.use(linkRoutes);
     app.use(blogRoutes);
     app.use(certificateRoutes);
+
     // for better error handling
     app.use(errorMiddleware);
-    //
     app.listen(3000, () => {
         console.log("Server started on port 3000");
     });
