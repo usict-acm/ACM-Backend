@@ -22,7 +22,7 @@ async function main() {
     }));
     app.use(express.json());
     // uncomment this code to enable auth
-    //app.use(requireJwtMiddleware);
+    app.use(requireJwtMiddleware);
 
     app.use(joinUsRoutes);
     app.use(contactUsRoutes);
