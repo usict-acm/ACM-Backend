@@ -1,5 +1,6 @@
 import { DecodeResult, EncodeResult, ExpirationStatus, PartialSession, Session } from "../session.js";
-import { decode, TAlgorithm, encode } from 'jwt-simple'
+import jwt, { TAlgorithm } from 'jwt-simple'
+const { encode, decode } = jwt;
 
 
 export function encodeSession(secretKey: string, partialSession: PartialSession): EncodeResult {
