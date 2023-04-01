@@ -195,6 +195,8 @@ model Team {
   year        Int      @db.Year
   category    String   @db.VarChar(20)
   added_on    DateTime @db.Date
+  techStack   String?  @db.Text
+  dob         DateTime? @db.Date
   active      Boolean  @default(true)
 
   @@map("team")
