@@ -198,6 +198,6 @@ model Team {
   techStack   String?  @db.Text
   dob         DateTime? @db.Date
   active      Boolean  @default(true)
-
+  membershipNo String  @db.Text @default("12345")
   @@map("team")
 }
