@@ -1,15 +1,14 @@
-import * as express from 'express';
-import { prisma } from '../database.js';
-import Exception from '../exception.js';
+import * as express from "express";
+import { prisma } from "../database.js";
+import Exception from "../exception.js";
 
 const router = express.Router();
 
 router.get("/link", async (_req, res, next) => {
     try {
-        let result = await prisma.link.findMany(
-            {
-                orderBy: { id: 'desc' }
-            });
+        let result = await prisma.link.findMany({
+            orderBy: { id: "desc" },
+        });
         res.send(result);
     } catch (e: any) {
         return next(new Exception(400, e.toString()));
@@ -17,7 +16,6 @@ router.get("/link", async (_req, res, next) => {
 });
 
 router.post("/link", async (req, res, next) => {
-
     try {
         const linkFor = String(req.body.linkFor);
         // need a valid url
@@ -27,40 +25,34 @@ router.post("/link", async (req, res, next) => {
         if (result > 0) {
             return next(new Exception(403, "this route alreay exists!"));
         }
-        await prisma.link.create(
-            {
-                data:
-                {
-                    linkFor: linkFor,
-                    originalLink: originalLink.toString(),
-                    code: code,
-                    count: 0
-                }
-            });
+        await prisma.link.create({
+            data: {
+                linkFor: linkFor,
+                originalLink: originalLink.toString(),
+                code: code,
+                count: 0,
+            },
+        });
         res.json({ code: code });
     } catch (e: any) {
         return next(new Exception(400, e.toString()));
     }
-
-
 });
 
-
-router.get('/link/:shortPath', async (req, res, next) => {
+router.get("/link/:shortPath", async (req, res, next) => {
     try {
         const shortPath: string = req.params.shortPath;
         let result = await prisma.link.findFirst({
             where: {
                 code: shortPath,
-            }
+            },
         });
         if (result) {
             await prisma.link.update({
-                where:
-                    { id: result.id },
+                where: { id: result.id },
                 data: {
-                    count: { increment: 1 }
-                }
+                    count: { increment: 1 },
+                },
             });
             return res.redirect(result.originalLink);
         }
@@ -68,10 +60,9 @@ router.get('/link/:shortPath', async (req, res, next) => {
     } catch (e: any) {
         return next(new Exception(400, e.toString()));
     }
+});
 
-})
-
-router.delete('/link/:id', async (req, res, next) => {
+router.delete("/link/:id", async (req, res, next) => {
     try {
         const id: number = Number(req.params.id);
         await prisma.link.delete({ where: { id: id } });
@@ -79,7 +70,6 @@ router.delete('/link/:id', async (req, res, next) => {
     } catch (e: any) {
         return next(new Exception(400, e.toString()));
     }
-
-})
+});
 
 export default router;

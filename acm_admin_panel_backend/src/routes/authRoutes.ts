@@ -7,17 +7,17 @@ const router = express.Router();
 
 router.post("/login", async (req, res, next) => {
     try {
-        let email = String(req.body.email);
+        let username = String(req.body.username);
         let password = String(req.body.password);
-        const user = await prisma.dashboardUsers.findFirst({
-            where: { email: email, password: password },
+        const user = await prisma.adminPanelUser.findFirst({
+            where: { username: username, password: password },
         });
         if (!user) {
             throw "email or passowrd incorrect!";
         }
         const session = encodeSession("SECRET_KEY_HERE", {
             id: user.id,
-            email: user.email,
+            username: user.username,
             dateCreated: Math.floor(+new Date() / 1000),
         });
         res.setHeader("X-JWT-Token", session.token);

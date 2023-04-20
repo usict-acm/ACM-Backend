@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/index.js --openssl-legacy-provider\"",
     "start": "yarn build ; node build/index.js  --openssl-legacy-provider",
+    "build-prod" : "prisma migrate deploy; yarn start",
     "build": "tsc"
   },
   "author": "Aditya Singh",
