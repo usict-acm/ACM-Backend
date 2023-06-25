@@ -174,29 +174,27 @@ model Link {
 }
 
 model Team {
-  id           Int       @id @default(autoincrement())
-  image        String    @db.Text
-  name         String    @db.VarChar(50)
-  designation  String    @db.VarChar(50)
-  linkedin     String?   @db.Text
-  github       String?   @db.Text
-  instagram    String?   @db.Text
-  year         Int       @db.Year
-  category     String    @db.VarChar(20)
-  added_on     DateTime  @db.Date
-  techStack    String?   @db.Text
-  dob          DateTime? @db.Date
-  active       Boolean   @default(true)
-  membershipNo String    @default("12345") @db.Text
-  project1Name String?   @db.Text
-  project1Desc String?   @db.Text
-  project1Image Bytes?   @db.LongBlob
-  project2Name String?   @db.Text
-  project2Desc String?   @db.Text
-  project2Image Bytes?   @db.LongBlob
-  project3Name String?   @db.Text
-  project3Desc String?   @db.Text
-  project3Image Bytes?   @db.LongBlob
+  id            Int       @id @default(autoincrement())
+  image         String    @db.Text
+  name          String    @db.VarChar(50)
+  designation   String    @db.VarChar(50)
+  linkedin      String?   @db.Text
+  github        String?   @db.Text
+  instagram     String?   @db.Text
+  year          Int       @db.Year
+  category      String    @db.VarChar(20)
+  techStack     String?   @db.Text
+  dob           DateTime? @db.Date
+  email         String    @default("") @db.Text
+  project1Name  String?   @db.Text
+  project1Desc  String?   @db.Text
+  project1Image Bytes?    @db.LongBlob
+  project2Name  String?   @db.Text
+  project2Desc  String?   @db.Text
+  project2Image Bytes?    @db.LongBlob
+  project3Name  String?   @db.Text
+  project3Desc  String?   @db.Text
+  project3Image Bytes?    @db.LongBlob
 
   @@map("team")
 }
@@ -208,12 +206,12 @@ model AdminPanelUser {
 }
 
 model OfficeBearer {
-    id Int @id
-    name String @db.Text
-    image String @db.Text
-    designation String @db.Text
-    linkendin String? @db.Text
-    category String @db.Text
+  id          Int     @id
+  name        String  @db.Text
+  image       String  @db.Text
+  designation String  @db.Text
+  linkendin   String? @db.Text
+  category    String  @db.Text
 
-    @@map("office_bearer")
+  @@map("office_bearer")
 }
