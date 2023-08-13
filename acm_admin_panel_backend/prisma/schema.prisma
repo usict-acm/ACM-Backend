@@ -188,13 +188,13 @@ model Team {
   email         String    @default("") @db.Text
   project1Name  String?   @db.Text
   project1Desc  String?   @db.Text
-  project1Image Bytes?    @db.LongBlob
+  project1Image String?    @db.LongText
   project2Name  String?   @db.Text
   project2Desc  String?   @db.Text
-  project2Image Bytes?    @db.LongBlob
+  project2Image String?    @db.LongText
   project3Name  String?   @db.Text
   project3Desc  String?   @db.Text
-  project3Image Bytes?    @db.LongBlob
+  project3Image String?    @db.LongText
 
   @@map("team")
 }

@@ -1,3 +1,4 @@
+import { Team } from '@prisma/client';
 import * as express from 'express';
 import { prisma } from '../database.js';
 import Exception from '../exception.js';
@@ -17,9 +18,13 @@ router.get("/team", async (_req, res, next) => {
 router.get("/team/:id", async (req, res, next) => {
     try {
         const id = Number(req.params.id);
-        let result = await prisma.team.findFirst({
+        let data = await prisma.team.findFirst({
             where: { id: id }
         });
+        if (!data) {
+            return next(new Exception(404, "resource not found!"));
+        }
+        let result: any = { ...data };
         res.json(result);
     } catch (e: any) {
         return next(new Exception(400, e.toString()));
@@ -29,7 +34,7 @@ router.get("/team/:id", async (req, res, next) => {
 router.patch("/team/:id", async (req, res, next) => {
     try {
         const id = Number(req.params.id);
-        const data = req.body;
+        const data: Partial<Team> = req.body;
         let result = await prisma.team.update({
             where: { id: id },
             data: data,
