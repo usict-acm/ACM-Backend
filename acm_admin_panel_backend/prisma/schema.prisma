@@ -210,7 +210,7 @@ model OfficeBearer {
   name        String  @db.Text
   image       String  @db.Text
   designation String  @db.Text
-  linkendin   String? @db.Text
+  linkedin   String? @db.Text
   category    String  @db.Text
 
   @@map("office_bearer")
